@@ -43,4 +43,12 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     return true;
 }
+public function removeRoleIfMultiple($roleName)
+{
+    if ($this->roles()->count() > 1) {
+        $this->removeRole($roleName); // hapus role tertentu
+        return true;
+    }
+    return false; // tidak dihapus karena hanya 1 role
+}
 }

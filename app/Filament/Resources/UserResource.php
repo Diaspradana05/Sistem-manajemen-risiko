@@ -30,12 +30,12 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->unique(User::class, 'email', ignoreRecord: true),
-
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->dehydrateStateUsing(fn ($state) => !empty($state) ? Hash::make($state) : null)
-                    ->required(fn (string $context): bool => $context === 'create')
-                    ->label('Password'),
+                    ->label('Password')
+                    ->dehydrateStateUsing(fn($state) => !empty($state) ? Hash::make($state) : null)
+                    ->dehydrated(fn ($state) => filled($state)) // hanya update jika diisi
+                    ->required(fn (string $context): bool => $context === 'create'),
 
                 Forms\Components\Select::make('roles')
                     ->relationship('roles', 'name')
@@ -45,26 +45,52 @@ class UserResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('email')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('roles.name')->label('Roles')->badge(),
-                Tables\Columns\TextColumn::make('created_at')->dateTime('d M Y H:i')->sortable(),
-            ])
-            ->filters([])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+   public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // Kolom tabel, misal:
+            Tables\Columns\TextColumn::make('name'),
+            Tables\Columns\TextColumn::make('email'),
+            Tables\Columns\TextColumn::make('roles.name')->label('Roles'),
+        ])
+        ->filters([
+            //
+        ])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\Action::make('removeRole')
+                ->label('Remove Role')
+                ->icon('heroicon-o-trash')
+                ->requiresConfirmation()
+                ->form([
+                    Forms\Components\Select::make('role')
+                        ->label('Pilih Role yang akan dihapus')
+                        ->options(fn (User $record) => $record->getRoleNames()->mapWithKeys(fn ($role) => [$role => $role]))
+                        ->required(),
+                ])
+                ->action(function (User $record, array $data): void {
+                    if ($record->roles()->count() > 1) {
+                        $record->removeRole($data['role']);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Role dihapus!')
+                            ->success()
+                            ->send();
+                    } else {
+                        \Filament\Notifications\Notification::make()
+                            ->title('Gagal, user hanya punya 1 role!')
+                            ->body('User harus memiliki minimal 1 role.')
+                            ->danger()
+                            ->send();
+                    }
+                }),
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ]);
+}
 
     public static function getPages(): array
     {
