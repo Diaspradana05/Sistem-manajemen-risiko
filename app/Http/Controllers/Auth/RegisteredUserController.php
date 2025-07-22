@@ -15,7 +15,7 @@ use Illuminate\View\View;
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Tampilkan halaman register.
      */
     public function create(): View
     {
@@ -23,9 +23,7 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Simpan user baru.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -35,19 +33,24 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        // Buat user baru
+       $user = User::create([
+        'name' => $request->input('name'),
+        'email' => $request->input('email'),
+        'password' => Hash::make($request->input('password')),
         ]);
 
-         // Kirim email verifikasi
-    event(new Registered($user));
+         // Assign default role "user"
+        $user->assignRole('user');
 
-    // Login user sementara, tapi harus verifikasi dulu
-    Auth::login($user);
 
-    // Arahkan ke halaman verifikasi email
-      return redirect()->route('verification.notice'); 
-}
+        // Kirim event Registered (email verification)
+        event(new Registered($user));
+
+        // Login otomatis
+        Auth::login($user);
+
+        // Redirect ke halaman verifikasi
+        return redirect()->route('verification.notice');
+    }
 }
