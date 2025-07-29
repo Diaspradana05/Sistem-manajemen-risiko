@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Mail\KirimEmail;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\LaporanRisikoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +58,7 @@ Route::post('/email/verification-notification', function (Request $request) {
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
+
 /**
  * Tes Kirim Email Manual
  */
@@ -63,4 +66,12 @@ Route::get('/tes-email', function () {
     $data = ['nama' => 'Dias Pradana'];
     Mail::to('pradanadias601@gmail.com')->send(new KirimEmail($data));
     return 'Email berhasil dikirim!';
+
+    
 });
+
+Route::get('/laporan-risiko/export/excel', [LaporanRisikoController::class, 'exportExcel'])->name('laporan-risiko.export.excel');
+Route::get('/laporan-risiko/export/pdf', [LaporanRisikoController::class, 'exportPDF'])
+    ->name('laporan-risiko.export.pdf');
+
+

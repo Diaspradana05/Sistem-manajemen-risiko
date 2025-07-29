@@ -45,7 +45,7 @@ class Register extends BaseRegister
         ]);
 
         // Berikan role default "user"
-        $user->assignRole('user');
+        $user->assignRole('staf');
 
         return $user;
     }
@@ -55,6 +55,6 @@ class Register extends BaseRegister
     }
     public function getHeading(): string
 {
-    return 'Sistem Manajemen Risiko'; // Ganti dengan nama sistem kamu
+    return 'Buat akun'; // Ganti dengan nama sistem kamu
 }
 }

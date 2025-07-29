@@ -16,7 +16,7 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?string $navigationLabel = 'Users';
+    protected static ?string $navigationLabel = 'Kelola User';
 
     public static function form(Form $form): Form
     {
@@ -105,4 +105,18 @@ class UserResource extends Resource
     {
         return auth()->user()?->hasRole('superadmin'); // hanya superadmin bisa akses
     }
+
+    protected static ?string $navigationGroup = 'Manajemen Risiko';
+    protected static ?int $navigationSort = 1; 
+
+    public static function getModelLabel(): string
+    {
+        return 'User';
+    }
+    public static function getPluralModelLabel(): string
+    {
+        return 'User';
+    }
 }
+
+

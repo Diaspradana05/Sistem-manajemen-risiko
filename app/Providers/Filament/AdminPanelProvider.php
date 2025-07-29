@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Register;
+use App\Filament\User\Resources\DaftarRisikoResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,7 +20,10 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Pages\Auth\Login;
-
+use App\Filament\User\Resources\RiskResource;
+use App\Filament\User\Pages\AnalisisRisiko;
+use App\Filament\User\Pages\LaporanRisiko;
+use App\Filament\User\Widgets\RingkasanRisiko;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -37,17 +41,37 @@ class AdminPanelProvider extends PanelProvider
             ->emailVerification()
             ->profile()
             ->colors([
-                'primary' => Color::Amber,
+                 'primary' => [
+                    50 => '238, 242, 255',
+                    100 => '224, 231, 255',
+                    200 => '199, 210, 254',
+                    300 => '165, 180, 252',
+                    400 => '129, 140, 248',
+                    500 => '99, 102, 241',
+                    600 => '79, 70, 229',
+                    700 => '67, 56, 202',
+                    800 => '55, 48, 163',
+                    900 => '49, 46, 129',
+                    950 => '30, 27, 75',
+                ],
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+                LaporanRisiko::class,
+                AnalisisRisiko::class,
+                 
             ])
+
+            ->resources([
+                DaftarRisikoResource::class,
+                RiskResource::class,
+])
+       
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                RingkasanRisiko::class,
             ])
             ->middleware([
                 EncryptCookies::class,
