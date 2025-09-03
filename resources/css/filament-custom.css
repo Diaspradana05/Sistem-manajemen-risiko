@@ -1,0 +1,49 @@
+/* ===== Styling Global Filament Table ===== */
+
+/* Header tabel */
+.fi-ta th {
+    background: linear-gradient(to right, #2563eb, #3b82f6); /* gradasi biru */
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid #e5e7eb; /* abu tipis */
+    padding: 10px;
+}
+
+/* Border untuk semua sel */
+.fi-ta th, 
+.fi-ta td {
+    border: 1px solid #e5e7eb;
+}
+
+/* Isi tabel */
+.fi-ta td {
+    padding: 8px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Zebra striping */
+.fi-ta tbody tr:nth-child(odd) {
+    background-color: #f9fafb; /* abu muda */
+}
+.fi-ta tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+/* Hover row */
+.fi-ta tbody tr:hover {
+    background-color: #e0f2fe; /* biru muda */
+    transition: background 0.2s ease-in-out;
+}
+/* Warna row berdasarkan role */
+.fi-ta tbody tr[data-role="superadmin"] {
+    background-color: #fee2e2 !important; /* merah muda */
+}
+.fi-ta tbody tr[data-role="staf"] {
+    background-color: #dcfce7 !important; /* hijau muda */
+}
+.fi-ta tbody tr[data-role="manager"] {
+    background-color: #fef9c3 !important; /* kuning muda */
+}
+

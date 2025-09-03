@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -18,7 +18,13 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'name',
         'email',
         'password',
-        'role'
+        'role',
+        'company_id',
+        'full_risk_access',     // <─ tambahkan ini
+        'can_create_risk',      // <─ dan ini
+        'can_update_risk',      // <─ dan ini
+        'can_delete_risk',      // <─ dan ini
+
     ];
 
     protected $hidden = [
@@ -29,7 +35,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            // 'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -51,4 +57,26 @@ public function removeRoleIfMultiple($roleName)
     }
     return false; // tidak dihapus karena hanya 1 role
 }
+
+public function company()
+{
+    return $this->belongsTo(Company::class);
+}
+
+public function divisions()
+{
+    // Relasi User → Division melalui pivot division_user
+    return $this->belongsToMany(Division::class, 'division_user')
+        ->withPivot('division_year_id') // hanya kolom pivot yang ada
+        ->withTimestamps();
+}
+
+public function divisionYears()
+{
+    // Relasi User → DivisionYear melalui pivot division_user
+    return $this->belongsToMany(DivisionYear::class, 'division_user', 'user_id', 'division_year_id')
+        ->withPivot('division_id') // kolom pivot yang ada
+        ->withTimestamps();
+}
+
 }

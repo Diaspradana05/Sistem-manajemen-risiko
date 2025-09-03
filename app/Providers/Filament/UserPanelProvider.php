@@ -4,6 +4,13 @@ namespace App\Providers\Filament;
 
 use App\Filament\User\Pages\AnalisisRisiko;
 use App\Filament\User\Pages\LaporanRisiko;
+use App\Filament\User\Widgets\AdvancedStatsOverviewWidget;
+use App\Filament\User\Widgets\AnalisisrisikoPieChartklinis;
+use App\Filament\User\Widgets\AnalisisrisikoBarChartklinis;
+use App\Filament\User\Widgets\AnalisisrisikoPieChartNonKlinis;
+use App\Filament\User\Widgets\AnalisisrisikoBarChartNonKlinis;
+use App\Filament\User\Widgets\WelcomeWidget;
+use App\Filament\Widgets\RiskMatrixWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -13,6 +20,8 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Hasnayeen\Themes\Http\Middleware\SetTheme;
+use Hasnayeen\Themes\ThemesPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -21,8 +30,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\User\Widgets\RingkasanRisiko;
-use App\Filament\Pages\Auth\Register;
-
+use App\Http\Middleware\RedirectIfNotUserRole;
 
 class UserPanelProvider extends PanelProvider
 {
@@ -33,9 +41,7 @@ class UserPanelProvider extends PanelProvider
             ->path('user')
             ->homeUrl('/user')
             ->login(Login::class)
-            ->registration(Register::class)
             ->passwordreset()
-            ->emailVerification()
             ->profile()
             ->brandName('')
             ->colors([
@@ -62,7 +68,13 @@ class UserPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
             ->widgets([
-                RingkasanRisiko::class,
+                AdvancedStatsOverviewWidget::class,
+                AnalisisrisikoPieChartklinis::class,
+                AnalisisrisikoBarChartklinis::class,
+                AnalisisrisikoPieChartNonKlinis::class,
+                AnalisisrisikoBarChartNonKlinis::class,
+                RiskMatrixWidget::class,
+                WelcomeWidget::class,
             ])
 
             ->middleware([
@@ -75,9 +87,17 @@ class UserPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                SetTheme::class,
             ])
+
+            ->plugin(
+                ThemesPlugin::make()
+            )
             ->authMiddleware([
                 Authenticate::class,
+                RedirectIfNotUserRole::class,
+
+            
             ]);
+        }
     }
-}

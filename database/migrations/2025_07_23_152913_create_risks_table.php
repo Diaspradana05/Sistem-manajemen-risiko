@@ -30,7 +30,7 @@ return new class extends Migration
             // Analisa risiko
             $table->integer('analisa_dampak')->default(0);
             $table->integer('analisa_probabilitas')->default(0);
-            $table->integer('analisa_conate')->default(0);
+            $table->integer('analisa_concate')->default(0);
             $table->integer('skor')->default(0);
             $table->string('peringkat_risiko')->nullable();
 

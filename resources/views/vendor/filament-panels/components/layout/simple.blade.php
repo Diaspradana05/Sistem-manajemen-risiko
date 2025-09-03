@@ -1,0 +1,86 @@
+@php
+    use Filament\Support\Enums\MaxWidth;
+
+    $livewire ??= null;
+@endphp
+
+<x-filament-panels::layout.base :livewire="$livewire">
+    @props([
+        'after' => null,
+        'heading' => null,
+        'subheading' => null,
+    ])
+
+    <div class="fi-simple-layout flex min-h-screen flex-col items-center">
+        @if (($hasTopbar ?? true) && filament()->auth()->check())
+            <div
+                class="absolute end-0 top-0 flex h-16 items-center gap-x-4 pe-4 md:pe-6 lg:pe-8"
+            >
+                @if (filament()->hasDatabaseNotifications())
+                    @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                        'lazy' => filament()->hasLazyLoadedDatabaseNotifications()
+                    ])
+                @endif
+
+                <x-filament-panels::user-menu />
+            </div>
+        @endif
+
+        <div
+            class="fi-simple-main-ctn flex w-full flex-grow items-center justify-center"
+        >
+        <main
+    @class([
+        'fi-simple-main my-16 w-full px-6 py-12 shadow-sm sm:rounded-xl sm:px-12 glass-card',
+        match ($maxWidth ??= (filament()->getSimplePageMaxContentWidth() ?? MaxWidth::Large)) {
+
+            MaxWidth::ExtraSmall, 'xs' => 'max-w-xs',
+            MaxWidth::Small, 'sm' => 'max-w-sm',
+            MaxWidth::Medium, 'md' => 'max-w-md',
+            MaxWidth::Large, 'lg' => 'max-w-6xl',  
+            MaxWidth::ExtraLarge, 'xl' => 'max-w-6xl',
+            MaxWidth::TwoExtraLarge, '2xl' => 'max-w-7xl',
+            MaxWidth::ThreeExtraLarge, '3xl' => 'max-w-7xl',
+            MaxWidth::FourExtraLarge, '4xl' => 'max-w-full',
+            MaxWidth::FiveExtraLarge, '5xl' => 'max-w-full',
+            MaxWidth::SixExtraLarge, '6xl' => 'max-w-full',
+            MaxWidth::SevenExtraLarge, '7xl' => 'max-w-full',
+            MaxWidth::Full, 'full' => 'max-w-full',
+            MaxWidth::MinContent, 'min' => 'max-w-min',
+            MaxWidth::MaxContent, 'max' => 'max-w-max',
+            MaxWidth::FitContent, 'fit' => 'max-w-fit',
+            MaxWidth::Prose, 'prose' => 'max-w-prose',
+            MaxWidth::ScreenSmall, 'screen-sm' => 'max-w-screen-sm',
+            MaxWidth::ScreenMedium, 'screen-md' => 'max-w-screen-md',
+            MaxWidth::ScreenLarge, 'screen-lg' => 'max-w-screen-lg',
+            MaxWidth::ScreenExtraLarge, 'screen-xl' => 'max-w-screen-xl',
+            MaxWidth::ScreenTwoExtraLarge, 'screen-2xl' => 'max-w-screen-2xl',
+            default => $maxWidth,
+        },
+    ])
+>
+    {{ $slot }}
+</main>
+
+<style>
+.glass-card {
+    background: rgba(255, 255, 255, 0.35); /* 🔥 tingkatkan transparansi */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    width: 600px;   /* 🔥 atur lebar form login */
+    max-width: 90%; /* biar responsif di layar kecil */
+}
+
+
+</style>
+
+        </div>
+
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::FOOTER, scopes: $livewire?->getRenderHookScopes()) }}
+    </div>
+</x-filament-panels::layout.base>

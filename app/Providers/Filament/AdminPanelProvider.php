@@ -4,6 +4,13 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Register;
 use App\Filament\User\Resources\DaftarRisikoResource;
+use App\Filament\User\Widgets\AnalisisrisikoBarChartklinis;
+use App\Filament\User\Widgets\AnalisisrisikoPieChartklinis;
+use App\Filament\User\Widgets\AnalisisrisikoPieChartNonKlinis;
+use App\Filament\User\Widgets\AnalisisrisikoBarChartNonKlinis;
+use App\Filament\User\Widgets\WelcomeWidget;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Middleware\RedirectIfNotUserRole;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -13,6 +20,8 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Hasnayeen\Themes\Http\Middleware\SetTheme;
+use Hasnayeen\Themes\ThemesPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -23,7 +32,11 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\User\Resources\RiskResource;
 use App\Filament\User\Pages\AnalisisRisiko;
 use App\Filament\User\Pages\LaporanRisiko;
-use App\Filament\User\Widgets\RingkasanRisiko;
+use App\Filament\User\Widgets\AnalisisrisikoPieChart;
+use App\Filament\User\Widgets\AnalisisrisikoBarChart;
+use App\Http\Middleware\RedirectIfNotSuperadmin;
+use App\Filament\User\Widgets\AdvancedStatsOverviewWidget;
+use App\Filament\Widgets\RiskMatrixWidget;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -36,25 +49,8 @@ class AdminPanelProvider extends PanelProvider
             ->homeUrl('/admin')
             ->login(Login::class)
             ->brandName('')
-            ->registration(Register::class)
             ->passwordreset()
-            ->emailVerification()
             ->profile()
-            ->colors([
-                 'primary' => [
-                    50 => '238, 242, 255',
-                    100 => '224, 231, 255',
-                    200 => '199, 210, 254',
-                    300 => '165, 180, 252',
-                    400 => '129, 140, 248',
-                    500 => '99, 102, 241',
-                    600 => '79, 70, 229',
-                    700 => '67, 56, 202',
-                    800 => '55, 48, 163',
-                    900 => '49, 46, 129',
-                    950 => '30, 27, 75',
-                ],
-            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -71,7 +67,14 @@ class AdminPanelProvider extends PanelProvider
        
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                RingkasanRisiko::class,
+                AdvancedStatsOverviewWidget::class,
+                RiskMatrixWidget::class,
+                AnalisisrisikoPieChartklinis::class,
+                AnalisisrisikoBarChartklinis::class,
+                AnalisisrisikoPieChartNonKlinis::class,
+                AnalisisrisikoBarChartNonKlinis::class,
+                WelcomeWidget::class,
+                
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -83,9 +86,16 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                SetTheme::class,
             ])
+
+            ->plugin(
+                ThemesPlugin::make()
+            )
             ->authMiddleware([
                 Authenticate::class,
+                RedirectIfNotSuperadmin::class,
+                
 
                 
             ]);

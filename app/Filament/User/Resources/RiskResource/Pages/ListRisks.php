@@ -13,7 +13,15 @@ class ListRisks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\Action::make('create_klinis')
+                ->label('Buat Risiko Klinis')
+                ->color('success')
+                ->url(RiskResource::getUrl('create', ['tipe_risiko' => 'klinis'])),
+
+            Actions\Action::make('create_non_klinis')
+                ->label('Buat Risiko Non-Klinis')
+                ->color('warning')
+                ->url(RiskResource::getUrl('create', ['tipe_risiko' => 'non-klinis'])),
         ];
     }
 }

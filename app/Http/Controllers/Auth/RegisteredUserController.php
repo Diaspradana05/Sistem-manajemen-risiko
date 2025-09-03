@@ -47,10 +47,10 @@ class RegisteredUserController extends Controller
         // Kirim event Registered (email verification)
         event(new Registered($user));
 
-        // Login otomatis
-        Auth::login($user);
+        // // Login otomatis
+        // Auth::login($user);
 
         // Redirect ke halaman verifikasi
-        return redirect()->route('verification.notice');
+        return redirect()->route('login');
     }
 }

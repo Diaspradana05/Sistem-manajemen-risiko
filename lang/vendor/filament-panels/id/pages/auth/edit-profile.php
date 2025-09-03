@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Profil',
+    'label' => 'Edit Profile',
 
     'form' => [
 
@@ -12,6 +12,10 @@ return [
 
         'name' => [
             'label' => 'Nama',
+        ],
+
+         'photo' => [
+            'label' => 'Foto Profil',
         ],
 
         'password' => [

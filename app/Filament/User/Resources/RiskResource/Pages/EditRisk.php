@@ -9,11 +9,4 @@ use Filament\Resources\Pages\EditRecord;
 class EditRisk extends EditRecord
 {
     protected static string $resource = RiskResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
 }

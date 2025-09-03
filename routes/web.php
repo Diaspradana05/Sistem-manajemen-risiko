@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfileController;
 use App\Mail\KirimEmail;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\LaporanRisikoController;
+use App\Http\Middleware\RedirectIfNotSuperadmin;
+
 
 
 /*
@@ -74,4 +76,13 @@ Route::get('/laporan-risiko/export/excel', [LaporanRisikoController::class, 'exp
 Route::get('/laporan-risiko/export/pdf', [LaporanRisikoController::class, 'exportPDF'])
     ->name('laporan-risiko.export.pdf');
 
+    
+Route::middleware(['auth', RedirectIfNotSuperadmin::class])
+    ->prefix('admin')
+    ->group(function () {
+    });
+
+Route::get('/test-403', function () {
+    abort(403);
+});
 
